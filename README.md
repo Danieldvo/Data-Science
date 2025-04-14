@@ -13,17 +13,6 @@ Este proyecto realiza un análisis exploratorio y analítico del mercado inmobil
 
 ---
 
-##  Estructura del Proyecto
-mercado_inmobiliario/ 
-├── 01_Diseño del proyecto_.ipynb 
-├── 02_Analisis de ficheros y preparacion del caso_.ipynb 
-├── 03_Creacion del datamart analitico_.ipynb 
-├── 04_Preparacion de datos_.ipynb 
-├── 05_Analisis e insights_.ipynb 
-├── 06_Resultados_.ipynb └── images/
-
----
-
 ##  Tecnologías utilizadas
 
 - **Python** (Pandas, Numpy, Matplotlib, Seaborn)
