@@ -16,18 +16,18 @@ from retrying import retry
 
 # Sites and webhooks configuration
 SITES_CONFIG = {
-    "sites": ["XBH7", "XWR4", "XCR2", "XBH6"],
-    "base_url": "https://rodeo-dub.amazon.com",
+    "sites": ["****", "****", "****", "****"],
+    "base_url": "https://****.amazon.com",
     "webhooks": {
-        "XBH7": "https://hooks.chime.aws/incomingwebhooks/7e0dc980-8176-48ac-91b9-5854da534eca?token=cjdhMlpZNUx8MXxjRF92YkdweWQ2R1hLRzhUYllrcDNLVTltLVE0UFdoTURPbkdxWTlEYXRB",
-        "XWR4": "https://hooks.chime.aws/incomingwebhooks/1e23c3ac-3453-455a-92c3-4974769f1693?token=cHdYWjJiQ058MXxHU0ExQ25MekQ3WjJOUWF3emFRM0lvTzlOUjhjVDU0SXVNM3E5SGh4Z2J3",
-        "XCR2": "https://hooks.chime.aws/incomingwebhooks/470c597a-e46d-4108-8a85-6915e06e1065?token=b2FkNG5yMEZ8MXx5Z2d1TUZ1V0Z3ZzkyanlPQkJuUThER281OVVIZ3MzRjZnV3QtTGdUTHBn",
-        "XBH6": "https://hooks.chime.aws/incomingwebhooks/95071469-73e3-4817-b28b-0ca3be29488c?token=S0hJQWFaVG18MXxzN2NZNUMxQnhpalVfTGRKRU0wY1ZDOTRLNFR6QjZ4UTJuVXBkV2kzMXRz"
+        "****": "https://hooks.chime.aws/incomingwebhooks...........",
+        "****": "https://hooks.chime.aws/incomingwebhooks...........",
+        "****": "https://hooks.chime.aws/incomingwebhooks...........",
+        "****": "https://hooks.chime.aws/incomingwebhooks..........."
     }
 }
 
 # Status webhook for monitoring
-STATUS_WEBHOOK = "https://hooks.chime.aws/incomingwebhooks/bd0844e5-eb6b-4c53-9495-5465167c390b?token=aTdlWkhJNHZ8MXxVOXB2T3drWElSNjNJTzJUQ00yNi05aUJiWjRvOHduM3JfT0h0alJmc21R"
+STATUS_WEBHOOK = "https://hooks.chime.aws/incomingwebhooks/......R"
 
 # Counter for consecutive failures
 CONSECUTIVE_FAILURES = 0
