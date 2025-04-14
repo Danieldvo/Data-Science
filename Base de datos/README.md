@@ -1,5 +1,4 @@
-#  SQL & Data Warehousing Projects - Master in Data Science
-
+#  SQL & Data Warehousing Projects 
 Este directorio recopila varios proyectos SQL desarrollados durante el máster en Data Science, centrados en el análisis y modelado de datos relacionados con los Juegos Olímpicos. Cada práctica está documentada en formato PDF y contiene ejercicios completos de diseño de bases de datos, transformaciones ETL, modelado OLAP, y consultas analíticas avanzadas.
 
 ---
