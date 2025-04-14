@@ -1,46 +1,92 @@
-#  Análisis del Mercado Inmobiliario
+#  Daniel Vargas – Data & Automation Portfolio
 
-Este proyecto realiza un análisis exploratorio y analítico del mercado inmobiliario a través de múltiples fases, desde el diseño del caso hasta la comunicación de resultados. Se desarrolló íntegramente en Python y Jupyter Notebooks, utilizando herramientas de análisis de datos y visualización para extraer insights relevantes sobre el comportamiento del mercado.
+¡Bienvenido/a a mi portfolio de proyectos! Soy **Daniel Vargas**, analista de datos con experiencia en operaciones industriales, automatización de procesos y análisis avanzado de datos. Aquí encontrarás una recopilación de mis trabajos más representativos en las áreas de **Data Analytics**, **Automatización con Python**, **SQL**, **Web Scraping**, y **Visualización de Datos**.
 
----
-
-##  Objetivos
-
-- Analizar datos del mercado inmobiliario en Madrid.
-- Construir un datamart analítico como base para el análisis.
-- Identificar patrones e insights relevantes (precios, zonas, tipologías).
-- Comunicar los hallazgos de forma visual y estructurada.
+Mi objetivo con este repositorio es mostrar soluciones reales aplicadas en entornos complejos como logística, manufactura y supply chain, combinando habilidades de ingeniería, automatización y visualización para generar impacto.
 
 ---
 
-##  Tecnologías utilizadas
+## 🧭 Sobre mí
 
-- **Python** (Pandas, Numpy, Matplotlib, Seaborn)
-- **Jupyter Notebook**
-- **Visualización de datos**
-- **Análisis exploratorio y descriptivo**
-
----
-
-##  Fases del Proyecto
-
-| Fase | Descripción |
-|------|-------------|
-| `01_Diseño del proyecto` | Definición del caso, objetivos y enfoque del análisis. |
-| `02_Analisis de ficheros` | Revisión y preparación inicial de los datos. |
-| `03_Creacion del datamart` | Consolidación de las fuentes en un datamart estructurado. |
-| `04_Preparacion de datos` | Limpieza, transformación y preparación para análisis. |
-| `05_Analisis e insights` | Generación de visualizaciones, búsqueda de patrones y hallazgos. |
-| `06_Resultados` | Presentación final con conclusiones y visualizaciones clave. |
+- 📍 Ubicación: Barcelona (con disponibilidad internacional)
+- 🎓 Formación:
+  - Máster en Ciencia de Datos *(en curso)* – Universitat Oberta de Catalunya
+  - Máster en Industria 4.0 – Universidad Politécnica de Madrid
+  - Grado en Ingeniería Mecánica – Universidad Politécnica de Madrid
+- 🏢 Actualmente: **Data Analyst en Amazon EU External Fulfillment**
+- 🌐 [LinkedIn](https://www.linkedin.com/in/danielvargaso/) | 📩 danidvo@gmail.com | 📱 +34 679 59 73 27
 
 ---
 
-##  Principales Insights
+## 📁 Estructura del Portfolio
 
-- Diferencias significativas de precios por zonas geográficas.
-- Relación entre características del inmueble (tamaño, tipología) y valor.
-- Comportamiento del mercado según antigüedad, ubicación y superficie.
-- Detección de valores atípicos y su impacto en el análisis.
+### 🔸 1. Data Analytics & Business Intelligence
+
+> Proyectos orientados al análisis de datos operativos, automatización de reportes y visualización de KPIs.
+
+- **TNT Opening Hours Automation**: Automatización de la extracción y envío de horarios de operación con Selenium + Outlook + Pandas.
+- **TTM Compliance Checker**: Validación de parámetros logísticos desde panel web, generación de Excel formateado y reporte vía email.
+- **Chime Reactive Bot**: Bot programado para monitorizar transferencias reactivas y notificar automáticamente a través de Amazon Chime.
+- **Análisis del Mercado Inmobiliario**: Exploración y modelado analítico del mercado de viviendas en Madrid usando Python, Jupyter, visualización y creación de un datamart.
+
+### 🔸 2. SQL & Data Warehousing
+
+> Prácticas académicas del máster enfocadas al modelado de datos, integración ETL y análisis OLAP.
+
+📂 [`/sql-projects`](./sql-projects)
+- Bases de datos en PostgreSQL y SQL Server
+- ETL con Pentaho Spoon
+- Cubos OLAP con SSAS
+- Dashboards en Visual Studio
+
+### 🔸 3. Automatización de Clasificación de Tickets
+
+> Scripts en Python para el análisis y categorización automática de tickets de soporte basados en pattern matching.
+
+- **Pattern Classifier**: Identificación de categorías a partir de patrones definidos con expresiones regulares y exportación en CSV.
+
+### 🔸 4. Web Scraping & Selenium Bots
+
+> Bots desarrollados con Selenium para navegar interfaces internas, descargar información y estructurarla automáticamente.
+
+- **Horarios Operativos TNT**
+- **Time Travel Map Extractor**
+- **Scraping logístico y de performance interna**
 
 ---
+
+## 💼 Tecnologías destacadas
+
+### Lenguajes y herramientas:
+- **Python** (Selenium, Pandas, Regex, OpenPyXL, pywin32, Matplotlib, Seaborn, Numpy)
+- **SQL** (PostgreSQL, SQL Server, SSMS)
+- **Power BI** / Tableau
+- **Pentaho Spoon (ETL)**
+- **Visual Studio + SSAS (OLAP)**
+- **VBA para automatización en Excel**
+- **Jupyter Notebooks**
+
+---
+
+## 🧠 Áreas de especialidad
+
+- Automatización de reporting y procesos operativos
+- Data cleaning y validación de calidad
+- Análisis de rendimiento logístico y productivo
+- Implementación de modelos OLAP y dashboards
+- Integración de datos de múltiples fuentes (ETL)
+- Web scraping interno de paneles operativos
+- Análisis exploratorio y descriptivo de datos
+
+---
+
+## 📬 Contacto
+
+Si estás interesado en colaborar, tienes preguntas sobre los proyectos o deseas que trabajemos juntos:
+
+- 📧 danidvo@gmail.com
+- 🌐 [LinkedIn](https://www.linkedin.com/in/danielvargaso/)
+- 📱 +34 679 59 73 27
+
+Gracias por visitar mi portfolio 🙌
 
