@@ -1,4 +1,4 @@
-#  SDC Reactive Transfers Bot
+#  Reactive Transfers Bot
 
 Este bot automatiza la extracción y notificación de transferencias reactivas entre almacenes logísticos. Ejecuta consultas en una interfaz interna, agrupa los datos y los envía a salas de Amazon Chime a través de webhooks, todo de forma programada y concurrente.
 
