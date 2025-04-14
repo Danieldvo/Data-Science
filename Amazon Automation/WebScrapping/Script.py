@@ -30,7 +30,7 @@ def web_driver(headless: bool = False, log_lv: int = 3, user_data_dir: str = Non
     return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
 def midway(driver: webdriver, pin: str):
-    url = "https://midway-auth.amazon.com/login?html_only_ui=1"
+    url = "*****"
     driver.get(url)
     otp = input("Touch Yubikey: ")
     try:
@@ -195,7 +195,7 @@ def process_single_site(driver, site_code, max_attempts=2):
     for attempt in range(max_attempts):
         try:
             # Navegar a la página del site
-            url = f"https://trans-logistics-eu.amazon.com/networkconfiguration/node/{site_code}?tab=HOURS_OF_OPERATION"
+            url = f"https:....../node/{site_code}?tab=HOURS_OF_OPERATION"
             driver.get(url)
 
             # Esperar a que la página cargue completamente
@@ -295,8 +295,8 @@ def send_tnt_email():
         # 1. Obtener el directorio del script y las rutas necesarias
         script_dir = os.path.dirname(os.path.abspath(__file__))
         download_dir = os.path.join(script_dir, 'download')
-        email_list_path = r"W:\Team Spaces\COS Team\Control Tower\Automated_Reports\OB\OB_mailing_list.xlsx"
-        template_path = r"W:\Team Spaces\COS Team\Control Tower\Automated_Reports\OB\ct_ob_email.html"
+        email_list_path = r"W:....OB_mailing_list.xlsx"
+        template_path = r"W:...\ct_ob_email.html"
        # Leer los sites del archivo sites.txt
         sites_to_process = read_sites_from_file('sites.txt')
         if not sites_to_process:
@@ -361,29 +361,24 @@ def send_tnt_email():
             # Personalizar el contenido del template
             email_body = (
                 "As part of our monthly TNT Opening Hours review process, please find attached the current opening hours configuration for your site. "
-                "We kindly request your review and validation of them.<br><br>"
-                "<strong>Important Guidelines for Review:</strong><br>"
-                "1. <u>Outbound Operating Hours:</u><br>"
-                "• Start Time should reflect First Dock Departure capability<br>"
-                "• End Time should reflect last possible First Dock Departure<br><br>"
-    
+  
                 "2. <u>Inbound Configuration:</u><br>"
-                "• First time Site can receive a truck at the dock door<br>"
-                "• Last time Site can receive IB and finish unloading it. Recommended Set 1 hour before end of shift.<br><br>"
+                .....
+                ....
+                ....
+
     
                 "3. <u>Yard Configuration:</u><br>"
-                "• The start of Yard hours should be the first time the Yard can check-in a truck, adding a buffer of 0.5 hours to process any queuing at the Gatehouse.<br>"
-                "• The end of Yard should be the earliest end time between IB and OB Dock.<br><br>"
-    
+                ....
+                ...
+                ...
+
+
                 "<strong>If changes are required:</strong><br>"
-                "Please submit a SIM request using CTI: External Fulfillment - EU 3PL CT / Support / TNT Opening Hours<br>"
-                "Changes will be effective in W+2 once Schedule Cycle is executed in W+1 with new Opening Hours configuration.<br><br>"
-    
-                "<strong>Important Note:</strong> Changes to site operating hours CANNOT be made directly into TNT/GRIT. "
-                "All modifications must be processed through the SIM request process.<br><br>"
-    
-                "If you have any questions, please contact us via eu-3pl-ct-outbound@amazon.com<br><br>"
-                "Refers to SOP_TNT_Opening Hours Review for further details.<br><br>"
+               ......
+               .....
+               ....
+
     
                 "Best regards,<br>"
             )
@@ -402,7 +397,7 @@ def send_tnt_email():
             # Usar la cuenta correcta de Outlook
             From = None
             for myEmailAddress in outlook.Session.Accounts:
-                if "eu-3pl-ct-outbound@amazon.com" in str(myEmailAddress):
+                if "****@amazon.com" in str(myEmailAddress):
                     From = myEmailAddress
                     break
 
