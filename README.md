@@ -1,8 +1,8 @@
-#  Daniel Vargas – Data & Automation Portfolio
+# 👨‍💻 Daniel Vargas – Data & Automation Portfolio
 
 ¡Bienvenido/a a mi portfolio de proyectos! Soy **Daniel Vargas**, analista de datos con experiencia en operaciones industriales, automatización de procesos y análisis avanzado de datos. Aquí encontrarás una recopilación de mis trabajos más representativos en las áreas de **Data Analytics**, **Automatización con Python**, **SQL**, **Web Scraping**, y **Visualización de Datos**.
 
-Mi objetivo con este repositorio es mostrar soluciones reales aplicadas en entornos complejos como logística, manufactura y supply chain, combinando habilidades de ingeniería, automatización y visualización para generar impacto.
+Mi objetivo con este repositorio es mostrar soluciones reales aplicadas en entornos complejos como logística, fabricación y supply chain, combinando habilidades de ingeniería, automatización y visualización para generar impacto.
 
 ---
 
@@ -28,6 +28,7 @@ Mi objetivo con este repositorio es mostrar soluciones reales aplicadas en entor
 - **TTM Compliance Checker**: Validación de parámetros logísticos desde panel web, generación de Excel formateado y reporte vía email.
 - **Chime Reactive Bot**: Bot programado para monitorizar transferencias reactivas y notificar automáticamente a través de Amazon Chime.
 - **Análisis del Mercado Inmobiliario**: Exploración y modelado analítico del mercado de viviendas en Madrid usando Python, Jupyter, visualización y creación de un datamart.
+- **TFM: Monitorización del Rendimiento con Power BI**: Proyecto de fin de máster basado en la integración de fuentes de datos (MES, ERP, MTTO) para analizar la productividad de una fábrica de encendedores mediante dashboards interactivos en Power BI.
 
 ### 🔸 2. SQL & Data Warehousing
 
@@ -77,16 +78,14 @@ Mi objetivo con este repositorio es mostrar soluciones reales aplicadas en entor
 - Integración de datos de múltiples fuentes (ETL)
 - Web scraping interno de paneles operativos
 - Análisis exploratorio y descriptivo de datos
+- Visualización empresarial con dashboards dinámicos
 
 ---
 
 ## 📬 Contacto
-
-Si estás interesado en colaborar, tienes preguntas sobre los proyectos o deseas que trabajemos juntos:
 
 - 📧 danidvo@gmail.com
 - 🌐 [LinkedIn](https://www.linkedin.com/in/danielvargaso/)
 - 📱 +34 679 59 73 27
 
 Gracias por visitar mi portfolio 🙌
-
