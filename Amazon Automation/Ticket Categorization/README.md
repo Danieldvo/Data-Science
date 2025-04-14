@@ -1,6 +1,7 @@
 #  Ticket Categorization Tool (Pattern Matching)
 
 Este proyecto automatiza la clasificación de tickets a partir de su contenido textual, aplicando técnicas de búsqueda por patrones (regex) para identificar causas raíz y facilitar el análisis de incidencias.
+Lograda la clasificación de un total de 5.000 tickets, tras varios refinamientos de los patterns
 
 ---
 
