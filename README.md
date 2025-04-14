@@ -11,6 +11,7 @@ Mi objetivo con este repositorio es mostrar soluciones reales aplicadas en entor
 - 📍 Ubicación: Barcelona (con disponibilidad internacional)
 - 🎓 Formación:
   - Máster en Ciencia de Datos *(en curso)* – Universitat Oberta de Catalunya
+  - Python Data Science Mastery - Data Science for Business
   - Máster en Industria 4.0 – Universidad Politécnica de Madrid
   - Grado en Ingeniería Mecánica – Universidad Politécnica de Madrid
 - 🏢 Actualmente: **Data Analyst en Amazon EU External Fulfillment**
