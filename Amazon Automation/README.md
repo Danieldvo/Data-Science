@@ -1,10 +1,10 @@
-# 🧾 Ticket Categorization Tool (Pattern Matching)
+#  Ticket Categorization Tool (Pattern Matching)
 
 Este proyecto automatiza la clasificación de tickets a partir de su contenido textual, aplicando técnicas de búsqueda por patrones (regex) para identificar causas raíz y facilitar el análisis de incidencias.
 
 ---
 
-## 🚀 Objetivo
+##  Objetivo
 
 - Automatizar el análisis y categorización de tickets de soporte.
 - Identificar causas comunes mediante expresiones regulares.
@@ -12,7 +12,7 @@ Este proyecto automatiza la clasificación de tickets a partir de su contenido t
 
 ---
 
-## 🛠 Tecnologías utilizadas
+##  Tecnologías utilizadas
 
 - Python (3.9+)
 - Regex (`re`)
@@ -22,7 +22,7 @@ Este proyecto automatiza la clasificación de tickets a partir de su contenido t
 
 ---
 
-## 🔍 ¿Cómo funciona?
+##  ¿Cómo funciona?
 
 1. **Lee una lista de tickets objetivo** desde un archivo `.txt`.
 2. **Procesa un documento grande de comentarios**, localizando cada ticket y analizando su contenido.
@@ -35,7 +35,7 @@ Este proyecto automatiza la clasificación de tickets a partir de su contenido t
 
 ---
 
-## 📊 Resultados generados
+##  Resultados generados
 
 - `tickets_by_category.csv`: Vista por categoría, incluyendo los patrones detectados.
 - `tickets_summary.csv`: Vista por ticket, con resumen de categorías y patrones encontrados.
