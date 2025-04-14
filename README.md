@@ -1,4 +1,4 @@
-# 👨‍💻 Daniel Vargas – Data & Automation Portfolio
+# 👨‍💻 Daniel Vargas – Data Science & Automation Portfolio
 
 ¡Bienvenido/a a mi portfolio de proyectos! Soy **Daniel Vargas**, analista de datos con experiencia en operaciones industriales, automatización de procesos y análisis avanzado de datos. Aquí encontrarás una recopilación de mis trabajos más representativos en las áreas de **Data Analytics**, **Automatización con Python**, **SQL**, **Web Scraping**, y **Visualización de Datos**.
 
