@@ -66,7 +66,7 @@ def prepare_email_outlook(subject, df, to_recipients, attachments):
     # Use the correct Outlook account
     From = None
     for myEmailAddress in outlook.Session.Accounts:
-        if "danivo@amazon.es" in str(myEmailAddress):
+        if "****@amazon.es" in str(myEmailAddress):
             From = myEmailAddress
             break
 
@@ -190,7 +190,7 @@ def web_driver(headless: bool = False, log_lv: int = 3, user_data_dir: str = Non
     return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
 # Autenticación en Midway
-def midway(driver: webdriver, pin: str, url: str = "https://midway-auth.amazon.com/login?html_only_ui=1"):
+def midway(driver: webdriver, pin: str, url: str = "******"):
     driver.get(url)
     otp = input("Touch Yubikey: ")
     print("Autenticación: Página cargada.")
@@ -490,8 +490,8 @@ if __name__ == "__main__":
         print(f"Fallo en la autenticación: {e}")
         exit(1)
 
-    #sites = ["XAR1", "XPO1", "MAD6", "MAD9", "MAD4", "MAD7", "BCN1"]
-    sites = ["XWR3"]
+    #sites = ["435g", "aY542", "6543Y", "54367Y", "64356>Y", "63456Y", "643y"]
+    sites = ["Y6534"]
     extracted_data = process_sites(driver, sites)
     df = pd.DataFrame(extracted_data)
 
