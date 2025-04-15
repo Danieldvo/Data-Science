@@ -69,7 +69,7 @@ Este proyecto automatiza la verificación de condiciones de configuración en ma
 | Site | Compliance |
 |------|------------|
 | YTH5 | ✅         |
-| Y&% | ❌         |
+| YTY6 | ❌         |
 | DF76 | ✅         |
 
 ---
