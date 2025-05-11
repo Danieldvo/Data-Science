@@ -34,8 +34,6 @@ Mi objetivo con este repositorio es mostrar soluciones reales aplicadas en entor
 ### 🔸 2. SQL & Data Warehousing
 
 > Prácticas académicas del máster enfocadas al modelado de datos, integración ETL y análisis OLAP.
-
-📂 [`/sql-projects`](./Base de datos)
 - Bases de datos en PostgreSQL y SQL Server
 - ETL con Pentaho Spoon
 - Cubos OLAP con SSAS
