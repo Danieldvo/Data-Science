@@ -66,8 +66,6 @@ target: {site} - Site al que se refiere
 {body} - Cuerpo explicativo del mensaje
 ```
 
-Puedes personalizar esta plantilla para adaptarla al lenguaje de tu organización.
-
 ---
 
 ##  Archivos de entrada
