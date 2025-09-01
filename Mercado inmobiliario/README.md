@@ -35,7 +35,7 @@ Este proyecto realiza un análisis exploratorio y analítico del mercado inmobil
 
 ---
 
-##  Principales Insights
+##  Principales Insights en 06_Resultados_.ipynb
 
 - Diferencias significativas de precios por zonas geográficas.
 - Relación entre características del inmueble (tamaño, tipología) y valor.
