@@ -1,0 +1,248 @@
+import boto3
+from openpyxl import load_workbook
+from openpyxl.utils.dataframe import dataframe_to_rows
+from io import StringIO, BytesIO
+from decimal import Decimal
+from datetime import datetime, timedelta, timezone, date
+import json
+import pandas as pd
+import base64
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email.mime.image import MIMEImage
+from email.encoders import encode_base64
+
+s3_client = boto3.client("s3")
+ses_client = boto3.client("ses", region_name="eu-central-1")
+
+def read_csv_from_s3(bucket_name, file_key):
+    response = s3_client.get_object(Bucket=bucket_name, Key=file_key)
+    csv_content = response['Body'].read().decode('utf-8')
+    csv_buffer = StringIO(csv_content)
+    df = pd.read_csv(csv_buffer)
+    return df
+
+def get_excel_from_s3(bucket_name, file_key):
+    try:
+        response = s3_client.get_object(Bucket=bucket_name, Key=file_key)
+        excel_content = BytesIO(response['Body'].read())
+        wb = load_workbook(excel_content)
+        ws = wb["Stuck Shipments"]
+        return wb, ws
+    except Exception as e:
+        print(f"Error loading Excel from S3: {str(e)}")
+        raise
+
+def read_html_styles(bucket_name, file_key):
+    try:
+        # Get the object from S3
+        response = s3_client.get_object(
+            Bucket=bucket_name,
+            Key=file_key
+        )
+        
+        # Read the content and decode it
+        html_content = response['Body'].read().decode('utf-8')
+        
+        return html_content
+        
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return None
+    
+def get_image_from_s3():
+    try:
+        # Get the base64 string from S3
+        response = s3_client.get_object(Bucket='ct-ob-reporting', Key='assets/logo_base64.txt')
+        base64_string = response['Body'].read().decode('utf-8')
+        
+        # Convert base64 string back to binary
+        image_data = base64.b64decode(base64_string)
+        return image_data
+    except Exception as e:
+        print(f"Error getting image from S3: {str(e)}")
+        raise
+
+def get_content_from_s3(bucket_name, file_key):
+    try:
+        response = s3_client.get_object(Bucket=bucket_name, Key=file_key)
+        file_content = response['Body'].read()
+        return file_content
+    except Exception as e:
+        print(f"Error getting file from S3: {e}")
+        return None
+    
+def update_report(script, status, user, is_runner):
+    print(f"Uploading {script} execution to tracker...")
+
+    dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
+    table = dynamodb.Table('ct-ob-reports')
+
+    # Convert timestamp to Decimal
+    timestamp = Decimal(str(datetime.now().timestamp()))
+
+    try:
+        item = {
+            'report': script,
+            'time': timestamp,
+            'is_runner': is_runner,
+            'status': status,
+            'user': user,
+            'chang': Decimal('1')
+        }
+
+        table.put_item(Item=item)
+
+        print("Uploaded to tracker")
+
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+
+def process_and_save_excel(warehouse_data, warehouse, template_bucket, template_key, output_bucket):
+    try:
+        # Load template from S3
+        wb, ws = get_excel_from_s3(template_bucket, template_key)
+        
+        # Filter data for specific warehouse
+        warehouse_df = warehouse_data[warehouse_data['warehouse_id'] == warehouse]
+        
+        # Starting from row 2 (skipping header)
+        for r_idx, row in enumerate(dataframe_to_rows(warehouse_df, index=False, header=False), start=2):
+            for c_idx, value in enumerate(row, start=1):
+                ws.cell(row=r_idx, column=c_idx, value=value)
+        
+        # Save to BytesIO object
+        excel_buffer = BytesIO()
+        wb.save(excel_buffer)
+        excel_buffer.seek(0)
+        
+        # Upload to S3
+        output_key = f"stuckshipment/output/StuckShipments_{warehouse}.xlsx"
+        s3_client.put_object(
+            Bucket=output_bucket,
+            Key=output_key,
+            Body=excel_buffer.getvalue()
+        )
+        return output_key
+        
+    except Exception as e:
+        print(f"Error processing excel for {warehouse}: {str(e)}")
+        raise
+
+
+def lambda_handler(event, context):       
+    try:
+        table_styles = read_html_styles("ct-ob-reporting", "assets/html/table_styles.html")
+        stuck_df = read_csv_from_s3("etl-jobs-ct", "stuckshipment/ETL/stuck000.csv")
+        today = date.today().strftime("%B %d, %Y")
+
+        # tracking created files
+        created_files = []
+
+        # save files 
+        for warehouse in stuck_df['warehouse_id'].unique():
+            file_key = process_and_save_excel(  
+                warehouse_data=stuck_df,
+                warehouse=warehouse,
+                template_bucket="etl-jobs-ct",
+                template_key="stuckshipment/template.xlsx",
+                output_bucket="etl-jobs-ct"
+            )
+            if file_key:
+                created_files.append(file_key)
+
+        # send emails
+
+        email_mapping = {'SITE': 'xxx'
+                         }
+
+        """
+        email_mapping = {'SITE': '.....',
+
+                         }
+        """
+
+        report_name = "Stuck Shipments"
+
+        for site, to_recipients in email_mapping.items():
+            file_key = f"stuckshipment/output/StuckShipments_{site}.xlsx"
+
+            if file_key in created_files: 
+                file_content = get_content_from_s3("etl-jobs-ct", file_key)
+                site_data = stuck_df[stuck_df['warehouse_id'] == site]
+                
+                recipients = [email.strip() for email in email_mapping[site].split(';') if email.strip()]
+                msg = MIMEMultipart('related')
+                msg["From"] = "email"
+                msg["To"] = ", ".join(recipients)
+                msg["Subject"] = f"Stuck Shipments Report for {site}"
+
+                msg_alternative = MIMEMultipart('alternative')
+                msg.attach(msg_alternative)
+                
+                # get template from S3
+                template_response = s3_client.get_object(Bucket='ct-ob-reporting', Key='assets/xxxx.html')
+                html_template = template_response["Body"].read().decode("utf-8")
+                
+                body_text = f"""
+                <html>
+                    <body>
+                        <p>Find attached the list of <b>stuck shipments</b> for <b>{today}</b>.</p>
+                    </body>
+                </html>
+                """
+                
+                html_content = html_template.replace("{site}", site).replace("{body}", body_text)
+                html_part = MIMEText(html_content, "html")
+                msg_alternative.attach(html_part)
+
+                image_data = get_image_from_s3()
+                image = MIMEImage(image_data)
+                image.add_header('Content-ID', '<logo>')
+                image.add_header('Content-Disposition', 'inline')
+                msg.attach(image)
+                
+                # create the attachment
+                attachment = MIMEBase('application', 'octet-stream')
+                attachment.set_payload(file_content)
+                encode_base64(attachment)
+                
+                attachment.add_header(
+                    'Content-Disposition',
+                    f'attachment; filename="StuckShipments_{site}.xlsx"'
+                )
+                msg.attach(attachment)
+                
+                response = ses_client.send_raw_email(
+                    Source="email",
+                    RawMessage={"Data": msg.as_string()}
+                )
+
+                print(f"Email sent for {site} using SES")
+            else:
+                print(f"No file found for {site}, skipping email")
+
+        # delete files from output
+        if created_files:
+            s3_client.delete_objects(
+                Bucket="etl-jobs-ct",
+                Delete={
+                    'Objects': [{'Key': key} for key in created_files],
+                    'Quiet': True
+                }
+            )
+
+        update_report(script="Stuck Shipments", status="ok", user="AWS", is_runner=True)
+        print("OB-Tracker updated.")
+
+        return {
+            'statusCode': 200,
+            'body': json.dumps('Stuck Shipments processing completed successfully.')
+        }
+
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps(f"Error: {str(e)}")
+        }
