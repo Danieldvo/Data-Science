@@ -10,24 +10,110 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor
 from retrying import retry
+import boto3
+from decimal import Decimal
+import boto3
+from datetime import datetime
+import json
+import threading
+
+#Variable global
+df_rodeo_accumulated = pd.DataFrame()
+
+class AWSLogger:
+    def __init__(self):
+        self.client = boto3.client('logs')  # o la región que uses
+        self.log_group = '/sdc-reactive-transfers-bot'
+        self.log_stream = f"{datetime.now().strftime('%Y-%m-%d')}-{os.getlogin()}"
+        self.sequence_token = None
+        self._initialize_logging()
+
+    def _initialize_logging(self):
+        """Inicializa el log stream si no existe"""
+        try:
+            # Intentar crear el log stream
+            try:
+                self.client.create_log_stream(
+                    logGroupName=self.log_group,
+                    logStreamName=self.log_stream
+                )
+                print(f"Log stream {self.log_stream} created successfully")
+            except self.client.exceptions.ResourceAlreadyExistsException:
+                print(f"Using existing log stream {self.log_stream}")
+
+        except Exception as e:
+            print(f"Error initializing CloudWatch Logs: {e}")
+
+    def log(self, message, log_type="INFO", details=None):
+        """Envía un log a CloudWatch"""
+        try:
+            timestamp = int(datetime.now().timestamp() * 1000)
+            log_entry = {
+                'timestamp': datetime.now().isoformat(),
+                'type': log_type,
+                'message': message,
+                'details': details or {}
+            }
+
+            params = {
+                'logGroupName': self.log_group,
+                'logStreamName': self.log_stream,
+                'logEvents': [{
+                    'timestamp': timestamp,
+                    'message': json.dumps(log_entry)
+                }]
+            }
+
+            if self.sequence_token:
+                params['sequenceToken'] = self.sequence_token
+
+            response = self.client.put_log_events(**params)
+            self.sequence_token = response['nextSequenceToken']
+
+        except Exception as e:
+            print(f"Error sending log to CloudWatch: {e}")
+
+# Crear instancia global del logger
+aws_logger = AWSLogger()
+
+def update_bot(script, status, user):
+    print(f"Uploading {script} bot execution to tracker...")
+    
+    dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
+    table = dynamodb.Table('ct-ob-bots')
+    timestamp = Decimal(str(datetime.now().timestamp()))
+
+    try:
+        item = {
+            'bot': script,
+            'status': status,
+            'time': timestamp,
+            'user': user,
+            'chang': Decimal('1')
+        }
+
+        table.put_item(Item=item)
+        print("Uploaded to tracker")
+
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
 
 # Sites and webhooks configuration
 SITES_CONFIG = {
-    "sites": ["****", "****", "****", "****"],
-    "base_url": "https://****.amazon.com",
+    "sites": ["",""..],
+    "sitesS3": ["",""...],
+    "base_url": "https://xxx",
     "webhooks": {
-        "****": "https://hooks.chime.aws/incomingwebhooks...........",
-        "****": "https://hooks.chime.aws/incomingwebhooks...........",
-        "****": "https://hooks.chime.aws/incomingwebhooks...........",
-        "****": "https://hooks.chime.aws/incomingwebhooks..........."
+        "SITE": "..",
+        "SITE": ".."
     }
 }
 
 # Status webhook for monitoring
-STATUS_WEBHOOK = "https://hooks.chime.aws/incomingwebhooks/......R"
+STATUS_WEBHOOK = "https://hooks.chime.aws/incomingwebhooks/bd0844e5-eb6b-4c53-9495-5465167c390b?token=aTdlWkhJNHZ8MXxVOXB2T3drWElSNjNJTzJUQ00yNi05aUJiWjRvOHduM3JfT0h0alJmc21R"
 
 # Counter for consecutive failures
 CONSECUTIVE_FAILURES = 0
@@ -88,25 +174,23 @@ def get_driver():
     service = Service(ChromeDriverManager().install())
     return webdriver.Chrome(service=service, options=options)
 @retry(stop_max_attempt_number=3, wait_fixed=2000)
-def get_table_data(site):
-    """Gets table data for a specific site"""
+def get_table_data(site, return_df=False):
     driver = None
     try:
         driver = get_driver()
         url = f"{SITES_CONFIG['base_url']}/{site}/ItemListCSV?_enabledColumns=on&enabledColumns=IS_REACTIVE_TRANSFER&Excel=true&IsReactiveTransfer=YES&shipmentType=TRANSSHIPMENTS"
-        
+
         driver.get(url)
-        
-        # Authentication verification
+
         if "login" in driver.current_url.lower():
             print(f"Authentication error in {site}. Please verify VPN connection.")
-            return None
-            
+            return pd.DataFrame() if return_df else None
+
         print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - Accessing {site}")
-        
+
         wait = WebDriverWait(driver, 20)
         table = wait.until(EC.presence_of_element_located((By.XPATH, "//table")))
-        
+
         rows = driver.execute_script("""
             const rows = document.getElementsByTagName('tr');
             const data = [];
@@ -120,24 +204,27 @@ def get_table_data(site):
             }
             return data;
         """)
-        
+
         if not rows:
             print(f"No rows found for {site}")
-            return None
-            
+            return pd.DataFrame() if return_df else None
+
         headers = rows[0]
         data = rows[1:]
-        
+
         if not data:
-            print(f"No data found for {site}")
-            return None
-            
+            print(f"No reactive transfers found for {site}")
+            message = f"/md ## Reactive Transfers\nNo reactive transfers pending at the moment for {site}"
+            success = send_to_chime(message, site)
+            print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - Message for {site}: {'Sent \u2713' if success else 'Failed \u2717'}")
+            return pd.DataFrame() if return_df else True
+
         df = pd.DataFrame(data, columns=headers)
-        return process_data_and_send_to_chime(df, site)
-        
+        return df if return_df else process_data_and_send_to_chime(df, site)
+
     except Exception as e:
         print(f"Error processing {site}: {e}")
-        return None
+        return pd.DataFrame() if return_df else None
     finally:
         if driver:
             try:
@@ -194,16 +281,20 @@ def process_data_and_send_to_chime(df, site):
         print(f"Error processing data for {site}: {e}")
         return False
 
+
 def job():
     """Execute main job"""
     global CONSECUTIVE_FAILURES
     job_start_time = datetime.now()
-    print(f"\n{job_start_time.strftime('%Y-%m-%d %H:%M:%S')} - Starting job")
     
+    aws_logger.log("Starting job execution", "INFO", {
+        "start_time": job_start_time.isoformat()
+    })
+
     try:
         with ThreadPoolExecutor(max_workers=len(SITES_CONFIG["sites"])) as executor:
             futures = []
-            for i, site in enumerate(SITES_CONFIG["sites"]):
+            for site in SITES_CONFIG["sites"]:
                 time.sleep(1)
                 futures.append(executor.submit(get_table_data, site))
             
@@ -211,51 +302,203 @@ def job():
         
         success_count = sum(1 for r in results if r)
         
-        # Verificar si todos los sites fueron procesados
+        aws_logger.log(
+            f"Job execution completed",
+            "INFO",
+            {
+                "sites_processed": f"{success_count}/{len(SITES_CONFIG['sites'])}",
+                "execution_time": str(datetime.now() - job_start_time)
+            }
+        )
+        print(f"Job completed: {success_count}/{len(SITES_CONFIG['sites'])} sites processed successfully")
         if success_count < len(SITES_CONFIG["sites"]):
             CONSECUTIVE_FAILURES += 1
+            aws_logger.log(
+                f"Not all sites processed successfully",
+                "WARNING",
+                {
+                    "consecutive_failures": CONSECUTIVE_FAILURES,
+                    "sites_processed": success_count,
+                    "total_sites": len(SITES_CONFIG["sites"])
+                }
+            )
+            
             if CONSECUTIVE_FAILURES >= 4:
+                aws_logger.log(
+                    "Critical failure: Too many consecutive failures",
+                    "ERROR",
+                    {
+                        "consecutive_failures": CONSECUTIVE_FAILURES,
+                        "last_success_count": success_count
+                    }
+                )
                 send_status_message(
                     f"Failed to process all sites for 4 consecutive runs. Last run: {success_count}/{len(SITES_CONFIG['sites'])} sites processed",
                     is_error=True
                 )
-                print("Demasiados fallos consecutivos. Terminando el programa.")
-                os._exit(1)  # Forzar la terminación del programa
+                #os._exit(1)
         else:
-            CONSECUTIVE_FAILURES = 0  # Reiniciar contador si todo fue exitoso
-            
-        # Send periodic status update
-        if job_start_time.hour % 6 == 0 and job_start_time.minute < 15:
-            send_status_message(f"Bot running normally. Sites processed: {success_count}/{len(SITES_CONFIG['sites'])}")
-            
-        print(f"Job completed: {success_count}/{len(SITES_CONFIG['sites'])} sites processed successfully")
+            CONSECUTIVE_FAILURES = 0
+
     except Exception as e:
+        aws_logger.log(
+            f"Error in job execution: {str(e)}",
+            "ERROR",
+            {
+                "error_type": type(e).__name__,
+                "error_details": str(e)
+            }
+        )
         print(f"Error in job execution: {e}")
+
+def upload_to_s3():
+    from io import StringIO
+
+    print("Starting S3 upload process using Selenium...")
+
+    try:
+        now = datetime.now()
+        now_plus_48 = now + timedelta(hours=48)
+        from_timestamp = int(now.timestamp() * 1000)
+        to_timestamp = int(now_plus_48.timestamp() * 1000)
+
+        sites = SITES_CONFIG["sitesS3"]
+        all_rodeo_data = []
+
+        for site in sites:
+            success = False
+            for attempt in range(3):  # Máximo 3 intentos
+                driver = None
+                try:
+                    rodeo_url = (
+                        f"https://rodeo.amazon.com/{site}/ItemListCSV?Excel=true"
+                        f"&ExSDRange.RangeStartMillis={from_timestamp}"
+                        f"&ExSDRange.RangeEndMillis={to_timestamp}"
+                        f"&shipmentType=TRANSSHIPMENTS"
+                    )
+
+                    driver = get_driver()
+                    driver.get(rodeo_url)
+
+                    # Verificamos si estamos logueados
+                    if "login" in driver.current_url.lower():
+                        print(f"❌ Not authenticated for site {site} - check VPN or SSO session.")
+                        time.sleep(5)
+                        continue
+
+                    # Esperar a que la tabla esté disponible
+                    wait = WebDriverWait(driver, 20)
+                    table = wait.until(EC.presence_of_element_located((By.XPATH, "//table")))
+
+                    # Extraer HTML y convertir a DataFrame
+                    html = driver.page_source
+                    tables = pd.read_html(StringIO(html))
+                    site_data = tables[0]
+                    site_data["orig_site"] = site
+                    site_data = site_data[site_data['Work Pool'] != 'PendingInventoryBinding']
+
+                    all_rodeo_data.append(site_data)
+                    print(f"✅ Data downloaded from {site}")
+                    success = True
+                    break
+
+                except Exception as e:
+                    print(f"❌ Attempt {attempt + 1}: Error downloading from {site}: {e}")
+                    time.sleep(5)
+                finally:
+                    if driver:
+                        try:
+                            driver.quit()
+                        except:
+                            pass
+
+            if not success:
+                print(f"❌ All attempts failed for {site}")
+
+        if not all_rodeo_data:
+            print("No data collected for S3 upload.")
+            return
+
+        rodeo = pd.concat(all_rodeo_data, ignore_index=True)
+        csv_buffer = rodeo.to_csv(index=False).encode('utf-8')
+
+        s3 = boto3.client('s3')
+        s3.put_object(
+            Bucket='ct-ob-reporting',
+            Key='tso_transcaps/rodeo/rodeo.csv',
+            Body=csv_buffer
+        )
+
+        print("✅ Upload to S3 completed")
+        aws_logger.log("Upload to S3 completed", "INFO", {"rows_uploaded": len(rodeo)})
+
+    except Exception as e:
+        print(f"❌ Error during S3 upload: {e}")
+        aws_logger.log("Upload to S3 failed", "ERROR", {"error": str(e)})
+
+
 
 if __name__ == "__main__":
     print("Starting initial job...")
-    send_status_message("Bot started and running")
+    username = os.getlogin()
+    
+    # Log de inicialización en CloudWatch
+    aws_logger.log("Bot initialization", "INFO", {
+        "user": username,
+        "start_time": datetime.now().isoformat()
+    })
+    
+    # Mensaje a Chime
+    send_status_message(f"Bot started and running by {username}")
     
     try:
-        # Validate webhooks before starting
-        if not validate_webhooks():
-            raise ValueError("Webhook validation failed")
-            
-        # Execute initial job
-        job()
+        # 1) Primer latido inmediato
+        update_bot("SDC", "started", username)
         
-        # Schedule job every 15 minutes
-        schedule.every(15).minutes.do(job)
+        # Validación de webhooks
+        if not validate_webhooks():
+            aws_logger.log("Webhook validation failed", "ERROR")
+            raise ValueError("Webhook validation failed")
+        
+        # 2) Segundo latido exacto a los 15 minutos
+        def delayed_alive():
+            update_bot("SDC", "started", username)
+            send_status_message("Bot heartbeat sent after 15 minutes")
+            print("Second heartbeat (alive) sent to tracker")
+        
+        timer = threading.Timer(15 * 60, delayed_alive)  # 15 minutos = 900 segundos
+        timer.start()
+        
+        # --- Programación de jobs normales ---
+        for hour in range(24):
+            for minute in [0, 15, 30, 45]:
+                schedule_time = f"{hour:02d}:{minute:02d}"
+                schedule.every().day.at(schedule_time).do(job)
 
-        # Main loop
+        # Programación de subidas a S3
+        schedule.every().day.at("06:00").do(upload_to_s3)
+        schedule.every().day.at("07:00").do(upload_to_s3)
+        schedule.every().day.at("08:00").do(upload_to_s3)
+        schedule.every().day.at("12:00").do(upload_to_s3)
+        schedule.every().day.at("17:00").do(upload_to_s3)
+        schedule.every().day.at("18:00").do(upload_to_s3)
+
+        # Bucle principal
         while True:
             schedule.run_pending()
             time.sleep(1)
             
     except KeyboardInterrupt:
+        aws_logger.log("Bot stopped manually", "INFO", {"user": username})
+        update_bot("SDC", "stopped", username)
         send_status_message("Bot stopped manually", is_error=True)
         print("\nProgram interrupted by user")
     except Exception as e:
+        aws_logger.log("Unexpected error", "ERROR", {
+            "error_type": type(e).__name__,
+            "error_details": str(e)
+        })
+        update_bot("SDC", "error", username)
         print(f"\nUnexpected error: {e}")
     finally:
         print("\nProgram finished")
