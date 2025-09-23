@@ -12,7 +12,7 @@ Mi objetivo con este repositorio es mostrar soluciones reales aplicadas en entor
 - 🎓 Formación:
   - Máster en Ciencia de Datos *(en curso)* – Universitat Oberta de Catalunya
   - Python Data Science Mastery - Data Science for Business
-  - Máster en Industria 4.0 (Smart Manufacturing, Big Data, IOT) – Universidad Politécnica de Madrid
+  - Máster en Industria 4.0 (Smart Manufacturing, Big Data, IOT) – Universitat Oberta de Catalunya
   - Grado en Ingeniería Mecánica – Universidad Politécnica de Madrid
 - 🏢 Actualmente: **Data Analyst en Amazon EU External Fulfillment**
 - 🌐 [LinkedIn](https://www.linkedin.com/in/danielvargaso/) | 📩 danidvo@gmail.com | 📱 +34 679 59 73 27
