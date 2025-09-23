@@ -26,7 +26,7 @@ with whs as (SELECT warehouse,
                AND status <> 'Closed'
                AND warehouse_type = 'Amazon3PL'
                AND country_code <> 'TR'
-               AND warehouse not in ('XESS', 'XITS', 'XFRT', 'XUKS', 'XITF', 'XDEA', 'XGEB')
+               AND warehouse not in ('xxx', 'xx', 'Xxx', 'XUxx', 'xxTF', 'Xxx', 'Xxx')
 ),
 
 max_date as (
@@ -74,7 +74,7 @@ group by 1
            AND (fulfillment_brand_code not IN ('RMVL_OVERSTOCK', 'RMVL_DAMAGE') OR fulfillment_brand_code IS NULL) order by 1
 $$)
 TO 's3://etl-jobs-ct/stuckshipment/ETL/stuck'
-    credentials 'aws_iam_role=arn:aws:iam::931618611287:role/RedshiftS3Access,arn:aws:iam::339712829211:role/ef-oe-prod1-s3-access-role'
+    credentials 'aws_iam_role=arn:aws:iam::xxxxxxx:role/RedshiftS3Access,arn:aws:iam::xxxxxx:role/ef-oe-prod1-s3-access-role'
     region 'us-east-1'    
     CSV
     header
