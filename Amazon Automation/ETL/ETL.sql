@@ -4,8 +4,8 @@
        {
         add:
            [                             
-              	{ name:"andes.aftbi_ddl.o_pending_customer_shipments"}, 
-                 {name:"andes.eu_ef_analytics.veritas_ef", cutoff:{hours:1}}
+              	{ name:"axxes.aftbi_ddl.o_pending_customer_shipments"}, 
+                 {name:"axxes.eu_xxef_analytics.veritas_ef", cutoff:{hours:1}}
           ]
        }
     }
@@ -21,7 +21,7 @@ with whs as (SELECT warehouse,
                                 WHEN country_code in ('UK') THEN 'GB'
                                 ELSE  country_code                                       END        as country_code,
                     weeklymaxoutboundmechcapacity
-             FROM andes.eu_ef_analytics.veritas_ef
+             FROM andes.eu_efxx_analytics.veritas_ef
              WHERE isdeleted = 0
                AND status <> 'Closed'
                AND warehouse_type = 'Amazon3PL'
@@ -73,7 +73,7 @@ group by 1
            and condition in (60,6001,6003,6006,6009)
            AND (fulfillment_brand_code not IN ('RMVL_OVERSTOCK', 'RMVL_DAMAGE') OR fulfillment_brand_code IS NULL) order by 1
 $$)
-TO 's3://etl-jobs-ct/stuckshipment/ETL/stuck'
+TO 's3://etl-jobs-ctxx/stuckshipment/ETL/stuck'
     credentials 'aws_iam_role=arn:aws:iam::xxxxxxx:role/RedshiftS3Access,arn:aws:iam::xxxxxx:role/ef-oe-prod1-s3-access-role'
     region 'us-east-1'    
     CSV
