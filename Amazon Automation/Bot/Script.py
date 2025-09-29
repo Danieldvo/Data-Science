@@ -113,7 +113,7 @@ SITES_CONFIG = {
 }
 
 # Status webhook for monitoring
-STATUS_WEBHOOK = "https://hooks.chime.aws/incomingwebhooks/bd0844e5-eb6b-4c53-9495-5465167c390b?token=aTdlWkhJNHZ8MXxVOXB2T3drWElSNjNJTzJUQ00yNi05aUJiWjRvOHduM3JfT0h0alJmc21R"
+STATUS_WEBHOOK = "https://hooks.chime.aws/...."
 
 # Counter for consecutive failures
 CONSECUTIVE_FAILURES = 0
